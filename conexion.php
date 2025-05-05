@@ -1,6 +1,6 @@
 <?php
-$usuario = 'system';  // Cambia según tu usuario Oracle
-$contrasena = '******';  // Cambia por tu contraseña
+$usuario = 'empleados';  // Cambia según tu usuario Oracle
+$contrasena = '1234';  // Cambia por tu contraseña
 $conexion = oci_connect($usuario, $contrasena, 'localhost/XE');
 
 if (!$conexion) {
