@@ -55,7 +55,7 @@ if (isset($_POST['logout'])) {
     }
 
     session_destroy();
-    $mensaje = "Has cerrado sesión correctamente a las $hora_salida.";
+    $mensaje = "Has cerrado sesión " . $_SESSION['nombre'] . " " . $_SESSION['apellidos'] . " correctamente a las $hora_salida.";
 }
 
 // Redirigir con mensaje
