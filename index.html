@@ -12,11 +12,43 @@
     <form action="login.php" method="POST">
       <input type="text" name="dni" placeholder="DNI" required />
       <input type="password" name="password" placeholder="Contraseña" required />
+      
+      <div id="reloj" style="font-weight: bold; margin: 10px 0;"></div>
+      <input type="hidden" name="hora_actual" id="hora_actual" />
+
       <div class="botones">
         <button type="submit" name="login">Login</button>
         <button type="submit" name="logout">Logout</button>
       </div>
     </form>
   </div>
+
+  <script>
+    function actualizarReloj() {
+      const ahora = new Date();
+      const reloj = document.getElementById("reloj");
+      const horaOculta = document.getElementById("hora_actual");
+
+      const formato = ahora.toLocaleString("es-ES", {
+        year: "numeric", month: "2-digit", day: "2-digit",
+        hour: "2-digit", minute: "2-digit", second: "2-digit",
+        hour12: false
+      });
+
+      reloj.textContent = "Hora actual: " + formato;
+
+      const fechaFormateada = ahora.getFullYear() + "-" +
+        String(ahora.getMonth() + 1).padStart(2, '0') + "-" +
+        String(ahora.getDate()).padStart(2, '0') + " " +
+        String(ahora.getHours()).padStart(2, '0') + ":" +
+        String(ahora.getMinutes()).padStart(2, '0') + ":" +
+        String(ahora.getSeconds()).padStart(2, '0');
+
+      horaOculta.value = fechaFormateada;
+    }
+
+    setInterval(actualizarReloj, 1000);
+    actualizarReloj();
+  </script>
 </body>
 </html>
