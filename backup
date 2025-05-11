@@ -1,0 +1,10 @@
+Hemos creado un script, que se ejecuta con una tarea programada de lunes a viernes a las 19:00 en la cual comprime la carpeta donde tenemos la base de datos
+y la copia al disco raid, para evitar perdida de información.
+
+
+$sourceFolder = "C:\xampp\mysql\data\proyecto"
+
+$destinationZip = "E:\copia_basedatos\backup.zip"
+
+Compress-Archive -Path $sourceFolder -DestinationPath $destinationZip -Force
+
