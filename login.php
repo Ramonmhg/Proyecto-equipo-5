@@ -9,25 +9,24 @@ if (isset($_POST['login'])) {
     $password = $_POST['password'];
     $hora_entrada = $_POST['hora_actual'];
 
-    $query = "SELECT NOMBRE, APELLIDOS, PASSWORD FROM EMPLEADO WHERE DNI = :dni";
-    $stid = oci_parse($conexion, $query);
-    oci_bind_by_name($stid, ':dni', $dni);
-    oci_execute($stid);
+    $query = "SELECT ID, NOMBRE, APELLIDOS, PASSWORD FROM EMPLEADO WHERE DNI = ?";
+    $stmt = mysqli_prepare($conexion, $query);
+    mysqli_stmt_bind_param($stmt, 's', $dni);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
 
-    if ($row = oci_fetch_assoc($stid)) {
+    if ($row = mysqli_fetch_assoc($result)) {
         if ($row['PASSWORD'] == $password) {
             $_SESSION['dni'] = $dni;
             $_SESSION['nombre'] = $row['NOMBRE'];
             $_SESSION['apellidos'] = $row['APELLIDOS'];
+            $id_empleado = $row['ID'];
 
             // Registrar ENTRADA
-            $insert_query = "INSERT INTO ENTRADA (ID_EMPLEADO, ENTRADA) 
-                             VALUES ((SELECT ID FROM EMPLEADO WHERE DNI = :dni), 
-                             TO_DATE(:hora_entrada, 'YYYY-MM-DD HH24:MI:SS'))";
-            $stid_insert = oci_parse($conexion, $insert_query);
-            oci_bind_by_name($stid_insert, ':dni', $dni);
-            oci_bind_by_name($stid_insert, ':hora_entrada', $hora_entrada);
-            oci_execute($stid_insert);
+            $insert_query = "INSERT INTO ENTRADA (ID_EMPLEADO, ENTRADA) VALUES (?, ?)";
+            $stmt_insert = mysqli_prepare($conexion, $insert_query);
+            mysqli_stmt_bind_param($stmt_insert, 'is', $id_empleado, $hora_entrada);
+            mysqli_stmt_execute($stmt_insert);
 
             $mensaje = "Inicio de sesión correcto a las $hora_entrada. Bienvenido, " . $_SESSION['nombre'] . " " . $_SESSION['apellidos'] . ".";
         } else {
@@ -44,18 +43,23 @@ if (isset($_POST['logout'])) {
         $dni = $_SESSION['dni'];
         $hora_salida = $_POST['hora_actual'];
 
+        $query = "SELECT ID FROM EMPLEADO WHERE DNI = ?";
+        $stmt = mysqli_prepare($conexion, $query);
+        mysqli_stmt_bind_param($stmt, 's', $dni);
+        mysqli_stmt_execute($stmt);
+        $result = mysqli_stmt_get_result($stmt);
+        $row = mysqli_fetch_assoc($result);
+        $id_empleado = $row['ID'];
+
         // Registrar SALIDA
-        $insert_salida = "INSERT INTO SALIDA (ID_EMPLEADO, SALIDA) 
-                          VALUES ((SELECT ID FROM EMPLEADO WHERE DNI = :dni), 
-                          TO_DATE(:hora_salida, 'YYYY-MM-DD HH24:MI:SS'))";
-        $stid_salida = oci_parse($conexion, $insert_salida);
-        oci_bind_by_name($stid_salida, ':dni', $dni);
-        oci_bind_by_name($stid_salida, ':hora_salida', $hora_salida);
-        oci_execute($stid_salida);
+        $insert_salida = "INSERT INTO SALIDA (ID_EMPLEADO, SALIDA) VALUES (?, ?)";
+        $stmt_salida = mysqli_prepare($conexion, $insert_salida);
+        mysqli_stmt_bind_param($stmt_salida, 'is', $id_empleado, $hora_salida);
+        mysqli_stmt_execute($stmt_salida);
     }
 
-    session_destroy();
     $mensaje = "Has cerrado sesión " . $_SESSION['nombre'] . " " . $_SESSION['apellidos'] . " correctamente a las $hora_salida.";
+    session_destroy();
 }
 
 // Redirigir con mensaje
