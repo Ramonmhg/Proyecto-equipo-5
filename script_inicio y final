@@ -1,0 +1,16 @@
+----Inicio----
+Script que se inicia cuando el usuario cliente inicia sesion y te abre la pagina web donde tiene que iniciar sesion!!!
+Este script ira alojado en c:\windows\SYSVOL\sysvol\Proyecto.equipo5\scripts y a parte en usuarios y equipos de active directory a cada usuario hay que añadirle en la pestaña perfil el nombre del script.
+start "" "http://192.168.100.1/proyecto/index.php"
+
+----Final-----
+Este script sirve como falso boton de apagado, en el cual cuando lo pulsas se abre una cuenta atras de 15 segundos para cerrar la sesion y se abre la pagina de logueo
+para poder marcar tu hora de salida.
+Con una directiva de grupo desde el servidor hemos hecho que ningun cliente pueda apagar el ordenador ni cerrar la sesion desde el boton de inicio,
+teniendo que ejecutar el boton puesto en el escritorio.
+Este boton activa el siguiente script:
+
+@echo off
+start "" "http://192.168.100.1/proyecto/index.html"
+timeout /t 15 /nobreak
+shutdown /l
